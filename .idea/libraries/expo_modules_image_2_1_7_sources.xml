@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="expo.modules.image-2.1.7-sources">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/node_modules/expo-image/local-maven-repo/BareExpo/expo.modules.image/2.1.7/expo.modules.image-2.1.7-sources.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
