@@ -251,7 +251,7 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({
 
   return (
     <Pressable style={styles.container} onPress={handlePress}>
-      <Image source={{ uri: `${process.env.EXPO_PUBLIC_API_URL?.replace('/api/v1', '')}${media[0]}` }} style={styles.image} />
+      <Image source={{ uri: `${process.env.EXPO_PUBLIC_API_URL}/api/v1${media[0]}` }} style={styles.image} />
       <View style={styles.category}>
         <Text style={styles.categoryText}>{category}</Text>
       </View>

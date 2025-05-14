@@ -74,9 +74,9 @@ export default function OtpVerification() {
             dispatch(verifySignUpOTPSuccess({ accessToken, refreshToken, user }));
             router.push('/(auth)/onboarding');
         }
-        catch (err) {
-            dispatch(verifySignUpOTPFailure("Something bad happend during OTP function."))
-            console.log(err)
+        catch (err: any) {
+            router.push('/(auth)/sign-up');
+            dispatch(verifySignUpOTPFailure(err.response.data.message || "Something bad happend during OTP function."))
         }
     }
 
@@ -186,7 +186,7 @@ export default function OtpVerification() {
             <View style={styles.logoContainer}>
                 <Video
                     ref={videoRef}
-                    source={require('../../assets/images/bg-video.mp4')}
+                    source={require('../../assets/videos/bg-video.mp4')}
                     style={StyleSheet.absoluteFill}
                     resizeMode={ResizeMode.COVER}
                     onPlaybackStatusUpdate={handlePlaybackUpdate}

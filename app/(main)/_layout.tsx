@@ -161,6 +161,13 @@ const MainLayout = () => {
                     href: null,
                 }}
             />
+
+            <Tabs.Screen
+                name="support"
+                options={{
+                    href: null,
+                }}
+            />
         </Tabs>
     );
 };

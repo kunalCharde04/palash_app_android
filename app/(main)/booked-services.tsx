@@ -10,7 +10,6 @@ import { Calendar, Clock, MapPin, User, CreditCard, ArrowRight } from 'lucide-re
 import { useRouter } from 'expo-router';
 import { Svg, Defs, RadialGradient, Stop, Circle, Rect, Path } from 'react-native-svg';
 import { typography } from '@/theme/typography';
-
 const { width } = Dimensions.get("window");
 
 interface Location {
@@ -308,7 +307,7 @@ export default function BookedServicesScreen() {
                         onPress={() => handleBookingPress(booking.id)}
                     >
                         <Image
-                            source={{ uri: `${process.env.EXPO_PUBLIC_API_URL?.replace('/api/v1', '')}${booking.service.media[0]}` }}
+                            source={{ uri: `${process.env.EXPO_PUBLIC_API_URL}/api/v1${booking.service.media[0]}` }}
                             style={styles.bookingImage}
                         />
                         <View style={styles.bookingContent}>

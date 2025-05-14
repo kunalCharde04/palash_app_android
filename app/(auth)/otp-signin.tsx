@@ -2,7 +2,7 @@
 
 import React, { useRef, useState, useEffect } from "react"
 import { StyleSheet, View, Text, Keyboard, Dimensions, NativeSyntheticEvent, TextInputKeyPressEventData, TextInput as RNTextInput, Image } from "react-native"
-import { useTheme } from "@/theme/theme-provider"
+import { ThemeProvider, useTheme } from "@/theme/theme-provider"
 import { Button } from "@/components/ui/buttons/Buttons"
 import { MoveLeftIcon, MoveRight } from 'lucide-react-native'
 import { Video, AVPlaybackStatus, ResizeMode } from "expo-av"
@@ -10,9 +10,11 @@ import { LinearGradient } from "expo-linear-gradient"
 import { IconButton } from "@/components/ui/buttons/IconButton"
 import { useRouter } from "expo-router"
 import { useDispatch, useSelector } from "react-redux";
-import { verifySignInOTPFailure, verifySignInOTPStart, verifySignInOTPSuccess } from "@/features/auth/auth-slice";
+import { signInFailure, verifySignInOTPFailure, verifySignInOTPStart, verifySignInOTPSuccess } from "@/features/auth/auth-slice";
 import { RootState } from "@/store"
 import { verifyOTP } from "@/api/auth"
+import { AnimatedErrorScreen } from "@/components/ui/error/error-screen"
+import { ErrorIllustration } from "@/components/ui/error/ErrorIllustration"
 const { width } = Dimensions.get("window")
 
 export default function SignInOTPVerification() {
@@ -74,8 +76,9 @@ export default function SignInOTPVerification() {
             dispatch(verifySignInOTPSuccess({ accessToken, refreshToken, user }));
             router.push('/(auth)/onboarding');
         }
-        catch (err) {
-            dispatch(verifySignInOTPFailure("Something went wrong during OTP verification."))
+        catch (err: any) {
+            dispatch(verifySignInOTPFailure(err.response.data.message || "Something went wrong during OTP verification."))
+            router.push('/(auth)/sign-in');
             console.error(err)
         }
     }
@@ -162,13 +165,28 @@ export default function SignInOTPVerification() {
         }
     });
 
+
+   if (error) {
+        return (
+            <ThemeProvider>
+                <AnimatedErrorScreen
+                    title="Oops! Something went wrong"
+                    message={error}
+                    onRetry={() => dispatch(verifySignInOTPFailure(""))}
+                    illustration={<ErrorIllustration />}
+                    errorCode="ERR_NETWORK_FAILURE"
+                />
+            </ThemeProvider>
+        )
+    }
+
     return (
         <View style={styles.container}>
             <IconButton style={styles.backIcon} icon={<MoveLeftIcon color={"#000"} />} size="large" onPress={() => router.push("/(auth)")} accessibilityLabel="go back" />
             <View style={styles.logoContainer}>
                 <Video
                     ref={videoRef}
-                    source={require('../../assets/images/bg-video.mp4')}
+                    source={require('../../assets/videos/bg-video.mp4')}
                     style={StyleSheet.absoluteFill}
                     resizeMode={ResizeMode.COVER}
                     onPlaybackStatusUpdate={handlePlaybackUpdate}

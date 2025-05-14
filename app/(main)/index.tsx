@@ -58,30 +58,31 @@ export default function MainIndex() {
             title: 'Beautiful Nature Scenes',
             thumbnail: require('@/assets/thumbnails/t1.png'),
             duration: '2:30',
-            videoUrl: require('@/assets/v1.mp4')
+            videoUrl: require('@/assets/videos/v1.mp4')
         },
         {
             id: '2',
             title: 'City Life Timelapse',
             thumbnail: require('@/assets/thumbnails/t2.png'),
             duration: '1:45',
-            videoUrl: require('@/assets/v2.mp4')
+            videoUrl: require('@/assets/videos/v2.mp4')
         },
         {
             id: '3',
             title: 'Ocean Waves',
             thumbnail: require('@/assets/thumbnails/t3.png'),
             duration: '3:15',
-            videoUrl: require('@/assets/v3.mp4')
+            videoUrl: require('@/assets/videos/v3.mp4')
         },
         {
             id: '4',
             title: 'Mountain Sunset',
             thumbnail: require('@/assets/thumbnails/t4.png'),
             duration: '2:00',
-            videoUrl: require('@/assets/v4.mp4')
+            videoUrl: require('@/assets/videos/v4.mp4')
         }
     ]);
+
 
     const showNotification = (type: 'success' | 'error' | 'info' | 'warning', message: string) => {
         setNotification({ type, message, visible: true });
@@ -636,7 +637,6 @@ export default function MainIndex() {
         )
     }
 
-
     return (
         <SafeAreaView style={styles.container}>
             <PopupNotification
@@ -672,7 +672,7 @@ export default function MainIndex() {
                                     .map((service) => (
                                         <View key={service.id} style={[styles.logoContainer, { width }]}>
                                             <Image
-                                                source={{ uri: `${process.env.EXPO_PUBLIC_API_URL?.replace('/api/v1', '')}${service?.media[0]}` }}
+                                                source={{ uri: `${process.env.EXPO_PUBLIC_API_URL}/api/v1${service?.media[0]}` }}
                                                 style={styles.featuredImage}
                                             />
                                             <LinearGradient

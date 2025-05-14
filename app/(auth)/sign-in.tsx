@@ -33,9 +33,8 @@ export default function SignIn() {
             dispatch(signInSuccess(email));
             router.push('/(auth)/otp-signin');
         }
-        catch (err) {
-            dispatch(signInFailure("Something went wrong during sign in."));
-            console.error(err);
+        catch (err: any) {
+            dispatch(signInFailure(err.response.data.message || "Something went wrong during sign in."));
             setEmail("");
         }
     };
@@ -111,7 +110,7 @@ export default function SignIn() {
             <View style={styles.logoContainer}>
                 <Video
                     ref={videoRef}
-                    source={require('../../assets/images/bg-video.mp4')}
+                    source={require('../../assets/videos/bg-video.mp4')}
                     style={StyleSheet.absoluteFill}
                     resizeMode={ResizeMode.COVER}
                     onPlaybackStatusUpdate={handlePlaybackUpdate}

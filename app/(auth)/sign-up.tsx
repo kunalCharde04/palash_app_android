@@ -207,12 +207,10 @@ export default function SignUp() {
             setPayload(inititalState);
             router.push('/(auth)/otp-signup');
         }
-        catch (err) {
-            console.log("error: ", err);
+        catch (err: any) {
             // handle signUp error gracefully
             setSteps(0);
-            dispatch(signUpFailure("Something bad happend during signup."));
-            console.log(err);
+            dispatch(signUpFailure(err.response.data.message || "Something bad happend during signup."));
             setPayload(inititalState);
         }
     }
@@ -283,7 +281,7 @@ export default function SignUp() {
 
                 <Video
                     ref={videoRef}
-                    source={require('../../assets/images/bg-video.mp4')}
+                    source={require('../../assets/videos/bg-video.mp4')}
                     style={StyleSheet.absoluteFill}
                     resizeMode={ResizeMode.COVER}
                     onPlaybackStatusUpdate={handlePlaybackUpdate}
@@ -328,7 +326,7 @@ export default function SignUp() {
 
                 <View style={styles.checkboxContainer}>
                     <Checkbox checked={agreed} onToggle={() => setAgreed(!agreed)} style={{ marginLeft: 8 }} />
-                    <Link href={"/(auth)/privacy-policy"} style={styles.termsText}>I agree with terms of use</Link>
+                    <Link href={"/privacy-policy"} style={styles.termsText}>I agree with terms of use</Link>
                 </View>
 
                 <Button loading={isLoading} disabled={payload[key] === ""} title={`${steps === fields.length - 1 ? "Submit" : "Next"}`} onPress={handleNext} style={{ marginBottom: spacing.md }} fullWidth size="large" icon={

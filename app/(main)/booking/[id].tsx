@@ -455,7 +455,7 @@ export default function BookingDetailsScreen() {
             </View>
             <ScrollView style={styles.content}>
                 <Image
-                    source={{ uri: `${process.env.EXPO_PUBLIC_API_URL?.replace('/api/v1', '')}${booking.service.media[0]}` }}
+                    source={{ uri: encodeURI(`${process.env.EXPO_PUBLIC_API_URL}${booking.service.media[0]}`) }}
                     style={styles.image}
                 />
                 <View style={styles.section}>

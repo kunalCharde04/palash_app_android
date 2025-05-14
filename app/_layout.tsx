@@ -32,8 +32,8 @@ export default function RootLayout() {
 if (__DEV__) {
   const clearStorageOnRefresh = async () => {
     try {
-      console.log("Development mode: Clearing AsyncStorage on refresh");
-      await AsyncStorage.clear();
+      console.log("Development mode");
+      // await AsyncStorage.clear();
     } catch (error) {
       console.error("Error clearing AsyncStorage:", error);
     }

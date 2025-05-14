@@ -40,7 +40,7 @@ const Index = () => {
         <Image source={require("../../assets/images/logo.png")} style={styles.logo} resizeMode="contain" />
       </View>
 
-      <Text style={{marginTop: -2, marginBottom: 40, color: colors.text.inverse, fontFamily: typography.fontFamily.sansSerif.manropeMedium, opacity: 0.8}}>Read our <Link href={'/(auth)/privacy-policy'} style={{color: colors.link.light,  textDecorationLine: "underline"}}>Privacy Policy</Link>.</Text>
+      <Text style={{marginTop: -2, marginBottom: 40, color: colors.text.inverse, fontFamily: typography.fontFamily.sansSerif.manropeMedium, opacity: 0.8}}>Read our <Link href={'/privacy-policy'} style={{color: colors.link.light,  textDecorationLine: "underline"}}>Privacy Policy</Link>.</Text>
 
 
       <Button title="Sign In"  onPress={() => {return router.push('/(auth)/sign-in')}}  style={{ marginBottom: spacing.md}} variant="secondary" textStyle={{color: colors.text.inverse}} fullWidth size="large"  />

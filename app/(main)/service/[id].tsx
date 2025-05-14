@@ -679,7 +679,7 @@ export default function ServiceDetail() {
             {service?.media.map((image, index) => (
               <View key={index} style={{ width: windowWidth }}>
                 <Image 
-                  source={{ uri: `${process.env.EXPO_PUBLIC_API_URL?.replace('/api/v1', '')}${image}` }} 
+                  source={{ uri: `${process.env.EXPO_PUBLIC_API_URL}/api/v1${image}` }} 
                   style={styles.headerImage} 
                 />
               </View>

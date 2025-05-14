@@ -99,10 +99,10 @@ export default function SettingsTab() {
               <View style={styles.settingIcon}>
                 <HelpCircle size={20} color={colors.primary.main} />
               </View>
-              <View style={styles.settingInfo}>
+              <Pressable style={styles.settingInfo} onPress={() => router.push('/(main)/support')}>
                 <Text style={styles.settingTitle}>Help Center</Text>
                 <Text style={styles.settingDescription}>Get help and contact support</Text>
-              </View>
+              </Pressable>
             </View>
           </View>
         </View>

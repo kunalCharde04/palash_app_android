@@ -30,19 +30,19 @@ const onboardingData = [
     id: "1",
     title: "Welcome to Palash",
     description: "Your journey to better health and wellness starts here",
-    illustration: require('../../assets/images/onboarding-3.jpg'),
+    illustration: require('../../assets/images/onboarding-3.png'),
   },
   {
     id: "2",
     title: "Discover Yoga",
     description: "Find your balance with expert-guided yoga sessions tailored to your needs",
-    illustration: require('../../assets/images/onboarding-2.jpg'),
+    illustration: require('../../assets/images/onboarding-2.png'),
   },
   {
     id: "3",
     title: "Mindful Meditation",
     description: "Reduce stress and improve focus with our guided meditation practices",
-    illustration: require('../../assets/images/onboarding-1.jpg'),
+    illustration: require('../../assets/images/onboarding-1.png'),
   },
 ]
 
