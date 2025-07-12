@@ -11,6 +11,11 @@
     "ios": {
       "supportsTablet": true
     },
+    "updates": {
+      "enabled": true
+    },
+    "developmentClient": false,
+    "jsEngine": "hermes",
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
@@ -18,6 +23,7 @@
       },
       "package": "com.palash.app",
       "versionCode": 1,
+      "jsEngine": "hermes",
       "edgeToEdgeEnabled": true
     },
     "web": {
