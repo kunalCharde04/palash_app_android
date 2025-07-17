@@ -496,10 +496,14 @@ export default function ServiceDetail() {
         serviceId: service?.id,
       });
 
+      console.log("orderResponse: ", orderResponse);
+
       if (!orderResponse || !orderResponse.id) {
         showNotification('error', 'Failed to create order');
         return;
       }
+
+      console.log("Constants.expoConfig?.extra?.EXPO_PUBLIC_RAZORPAY_KEY_ID: ", Constants.expoConfig?.extra?.EXPO_PUBLIC_RAZORPAY_KEY_ID);
 
       // Prepare Razorpay options
       const options = {
@@ -601,13 +605,15 @@ export default function ServiceDetail() {
         return true;
       } else if (data.type === 'payment_error') {
         setShowPaymentWebView(false);
-        dispatch(createBookingFailure('Payment failed. Please try again.'));
-        showNotification('error', 'Payment failed. Please try again.');
+        setIsPaymentProcessing(false);
+        dispatch(createBookingFailure('Payment failed. If you have already paid, please wait for the admin to confirm your booking.'));
+        showNotification('error', 'Payment failed. If you have already paid, please wait for the admin to confirm your booking.');
         return false;
       }
     } catch (error) {
       dispatch(createBookingFailure('Payment verification failed'));
       console.error('Payment verification error:', error);
+      setIsPaymentProcessing(false);
       showNotification('error', 'Payment verification failed');
       return false;
     }

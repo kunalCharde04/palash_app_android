@@ -46,6 +46,7 @@ export default function MainIndex() {
         message: 'This is a notification',
         visible: false,
     });
+
     const { width: windowWidth } = useWindowDimensions();
     const [currentIndex, setCurrentIndex] = useState(0);
     const [showBackToTop, setShowBackToTop] = useState(false);

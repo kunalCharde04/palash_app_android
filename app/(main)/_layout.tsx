@@ -8,7 +8,7 @@ import { refreshTokenSuccess, refreshTokenFailure, logout } from "@/features/aut
 import { BackHandler, Alert, View, StyleSheet, Platform } from 'react-native';
 import { useTheme } from '@/theme/theme-provider';
 import { BlurView } from 'expo-blur';
-import { Home, Bell, User, Calendar } from 'lucide-react-native';
+import { Home, Bell, User, Calendar, CreditCard } from 'lucide-react-native';
 
 const MainLayout = () => {
     const router = useRouter();
@@ -125,12 +125,25 @@ const MainLayout = () => {
             <Tabs.Screen
                 name="booked-services"
                 options={{
-                    title: 'My Bookings',
+                    title: 'Bookings',
                     tabBarIcon: ({ color, size, focused }) => (
                         <View style={[
                             styles.iconContainer,
                         ]}>
                             <Calendar size={size} color={focused ? colors.feedback.success.main : colors.text.secondary} />
+                        </View>
+                    ),
+                }}
+            />
+            <Tabs.Screen
+                name="memberships"
+                options={{
+                    title: 'Membership',
+                    tabBarIcon: ({ color, size, focused }) => (
+                        <View style={[
+                            styles.iconContainer,
+                        ]}>
+                            <CreditCard size={size} color={focused ? colors.feedback.success.main : colors.text.secondary} />
                         </View>
                     ),
                 }}
@@ -154,6 +167,12 @@ const MainLayout = () => {
                     href: null,
                 }}
             />
+            <Tabs.Screen
+                name="membership/[id]"
+                options={{
+                    href: null,
+                }}
+            />
 
             <Tabs.Screen
                 name="booking/[id]"
@@ -161,6 +180,8 @@ const MainLayout = () => {
                     href: null,
                 }}
             />
+
+
 
             <Tabs.Screen
                 name="support"

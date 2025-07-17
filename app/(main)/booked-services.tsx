@@ -6,7 +6,7 @@ import PopupNotification from '@/components/Notification';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store';
 import { Badge } from '@/components/Badge';
-import { Calendar, Clock, MapPin, User, CreditCard, ArrowRight } from 'lucide-react-native';
+import { Calendar, Clock, MapPin, User, CreditCard, ArrowRight, Users, CheckCircle, XCircle } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
 import { Svg, Defs, RadialGradient, Stop, Circle, Rect, Path } from 'react-native-svg';
 import { typography } from '@/theme/typography';
@@ -34,9 +34,25 @@ interface Booking {
     total_amount: number;
 }
 
+interface BookingsResponse {
+    activeBookings: Booking[];
+    cancelledBookings: Booking[];
+    totalBookings: number;
+    expiredCount: number;
+}
+
+type TabType = 'active' | 'inactive';
+
 export default function BookedServicesScreen() {
     const { colors, spacing, borderRadius } = useTheme();
-    const [bookings, setBookings] = useState<Booking[]>([]);
+    const [activeTab, setActiveTab] = useState<TabType>('active');
+    const [bookingsData, setBookingsData] = useState<BookingsResponse>({
+        activeBookings: [],
+        cancelledBookings: [],
+        totalBookings: 0,
+        expiredCount: 0
+    });
+    console.log("bookingsData: ", bookingsData);
     const [loading, setLoading] = useState(true);
     const [notification, setNotification] = useState({
         type: 'success' as 'success' | 'error' | 'info' | 'warning',
@@ -46,6 +62,21 @@ export default function BookedServicesScreen() {
     const { user } = useSelector((state: RootState) => state.authReducer);
     const { currentBooking } = useSelector((state: RootState) => state.bookingReducer);
     const router = useRouter();
+
+    const tabs = [
+        { 
+            key: 'active' as TabType, 
+            title: 'Active Bookings', 
+            count: bookingsData.activeBookings.length,
+            icon: CheckCircle
+        },
+        { 
+            key: 'inactive' as TabType, 
+            title: 'Past Bookings', 
+            count: bookingsData.cancelledBookings.length,
+            icon: XCircle
+        },
+    ];
 
     const showNotification = (type: 'success' | 'error' | 'info' | 'warning', message: string) => {
         setNotification({ type, message, visible: true });
@@ -62,8 +93,19 @@ export default function BookedServicesScreen() {
                     showNotification('error', 'User not found');
                     return;
                 }
-                const bookings = await getBookingsByUserId(user.id);
-                setBookings(bookings);
+                const response = await getBookingsByUserId(user.id);
+                // Handle both old and new API response formats
+                if (response.activeBookings && response.cancelledBookings) {
+                    setBookingsData(response);
+                } else {
+                    // Fallback for old format - treat all as active bookings
+                    setBookingsData({
+                        activeBookings: response,
+                        cancelledBookings: [],
+                        totalBookings: response.length,
+                        expiredCount: 0
+                    });
+                }
                 showNotification('success', 'Bookings loaded successfully');
             } catch (error) {
                 console.error(error);
@@ -105,6 +147,103 @@ export default function BookedServicesScreen() {
         });
     };
 
+    const renderBookingCard = (booking: Booking) => (
+        <Pressable
+            key={booking.id}
+            style={styles.bookingCard}
+            onPress={() => handleBookingPress(booking.id)}
+        >
+            <Image
+                source={{ uri: `${process.env.EXPO_PUBLIC_API_URL}/api/v1${booking.service.media[0]}` }}
+                style={styles.bookingImage}
+            />
+            <View style={styles.bookingContent}>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Text style={styles.serviceName}>{booking.service.name.length > 20 ? booking.service.name.slice(0, 20) + '...' : booking.service.name}</Text>
+                    <Badge
+                        text={booking.status}
+                        variant={getStatusColor(booking.status)}
+                        size="small"
+                    />
+                </View>
+                <View style={styles.bookingDetails}>
+                    <View style={styles.detailRow}>
+                        <Calendar size={16} color={colors.text.secondary} style={styles.detailIcon} />
+                        <Text style={styles.detailText}>{formatDate(booking.date)}</Text>
+                    </View>
+                    <View style={styles.detailRow}>
+                        <Clock size={16} color={colors.text.secondary} style={styles.detailIcon} />
+                        <Text style={styles.detailText}>{booking.time_slot}</Text>
+                    </View>
+                    <View style={styles.detailRow}>
+                        <User size={16} color={colors.text.secondary} style={styles.detailIcon} />
+                        <Text style={styles.detailText}>{booking.service.instructorName}</Text>
+                    </View>
+                    {booking.service.location && (
+                        <View style={styles.detailRow}>
+                            <MapPin size={16} color={colors.text.secondary} style={styles.detailIcon} />
+                            <Text style={styles.detailText}>
+                                {booking.service.location.address}, {booking.service.location.city}
+                            </Text>
+                        </View>
+                    )}
+                </View>
+                <View style={styles.priceContainer}>
+                    <Text style={styles.price}>₹{booking.total_amount}</Text>
+                    <View style={styles.viewDetailsButton}>
+                        <Text style={styles.viewDetailsText}>View Details</Text>
+                        <ArrowRight size={16} color={colors.neutral.white} />
+                    </View>
+                </View>
+            </View>
+        </Pressable>
+    );
+
+    const renderEmptyState = (title: string, description: string, icon: any) => {
+        const IconComponent = icon;
+        return (
+            <View style={styles.emptyTabState}>
+                <IconComponent size={64} color={colors.text.disabled} />
+                <Text style={styles.emptyTitle}>{title}</Text>
+                <Text style={styles.emptyDescription}>{description}</Text>
+            </View>
+        );
+    };
+
+    const renderTabContent = () => {
+        if (activeTab === 'active') {
+            if (bookingsData.activeBookings.length === 0) {
+                return renderEmptyState(
+                    'No Active Bookings', 
+                    'You don\'t have any active bookings at the moment. Book a service to get started!',
+                    CheckCircle
+                );
+            }
+            return (
+                <ScrollView contentContainerStyle={styles.tabContent}>
+                    {bookingsData.activeBookings
+                      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+                      .map((booking) => renderBookingCard(booking))}
+                </ScrollView>
+            );
+        } else {
+            if (bookingsData.cancelledBookings.length === 0) {
+                return renderEmptyState(
+                    'No Past Bookings', 
+                    'Your booking history will appear here once you complete or cancel services.',
+                    XCircle
+                );
+            }
+            return (
+                <ScrollView contentContainerStyle={styles.tabContent}>
+                    {bookingsData.cancelledBookings
+                      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+                      .map((booking) => renderBookingCard(booking))}
+                </ScrollView>
+            );
+        }
+    };
+
     const styles = StyleSheet.create({
         container: {
             flex: 1,
@@ -112,30 +251,75 @@ export default function BookedServicesScreen() {
         },
         content: {
             flex: 1,
-            paddingHorizontal: spacing.lg,
             backgroundColor: colors.background.default,
         },
-        scrollContent: {
-            paddingBottom: 100,
-        },
         header: {
-            marginBottom: spacing.xl,
+            paddingHorizontal: spacing.lg,
+            paddingTop: spacing['6xl'],
+            paddingBottom: spacing.lg,
+            backgroundColor: colors.primary.main,
         },
         title: {
             fontSize: 24,
             fontWeight: 'bold',
-            color: colors.text.primary,
+            color: colors.neutral.white,
             marginBottom: spacing.xs,
-            marginTop: spacing['6xl'],
         },
         subtitle: {
             fontSize: 16,
+            color: colors.neutral.light,
+        },
+        tabContainer: {
+            flexDirection: 'row',
+            backgroundColor: colors.background.paper,
+            paddingHorizontal: spacing.md,
+            borderBottomWidth: 1,
+            borderBottomColor: colors.border.main,
+        },
+        tab: {
+            flex: 1,
+            paddingVertical: spacing.md,
+            paddingHorizontal: spacing.sm,
+            alignItems: 'center',
+            borderBottomWidth: 3,
+            borderBottomColor: 'transparent',
+        },
+        activeTab: {
+            borderBottomColor: colors.primary.main,
+        },
+        tabContent: {
+            padding: spacing.lg,
+            paddingBottom: 100,
+        },
+        tabIconContainer: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            marginBottom: spacing.xs,
+        },
+        tabIcon: {
+            marginRight: spacing.xs,
+        },
+        tabText: {
+            fontSize: 14,
+            fontWeight: '600',
             color: colors.text.secondary,
+            textAlign: 'center',
+        },
+        activeTabText: {
+            color: colors.primary.main,
+        },
+        tabCount: {
+            fontSize: 10,
+            color: colors.text.disabled,
+            marginTop: 2,
+        },
+        activeTabCount: {
+            color: colors.primary.main,
         },
         bookingCard: {
             backgroundColor: colors.neutral.lightest,
             borderRadius: borderRadius.primary,
-            marginBottom: spacing.xl,
+            marginBottom: spacing.lg,
             overflow: 'hidden',
             elevation: 2,
             shadowColor: colors.neutral.dark,
@@ -167,7 +351,6 @@ export default function BookedServicesScreen() {
         },
         detailIcon: {
             marginRight: spacing.sm,
-            color: colors.text.secondary,
         },
         detailText: {
             fontSize: 14,
@@ -194,10 +377,10 @@ export default function BookedServicesScreen() {
             backgroundColor: colors.primary.main,
             paddingVertical: spacing.sm,
             paddingHorizontal: spacing.md,
-            borderRadius: borderRadius.full,
+            borderRadius: borderRadius.primary,
         },
         viewDetailsText: {
-            color: colors.neutral.lightest,
+            color: colors.neutral.white,
             marginRight: spacing.xs,
             fontWeight: '600',
         },
@@ -207,6 +390,13 @@ export default function BookedServicesScreen() {
             justifyContent: 'center',
             paddingHorizontal: spacing.xl,
             backgroundColor: colors.background.default,
+        },
+        emptyTabState: {
+            flex: 1,
+            alignItems: 'center',
+            justifyContent: 'center',
+            paddingHorizontal: spacing.xl,
+            paddingVertical: spacing['6xl'],
         },
         illustrationContainer: {
             width: width * 0.7,
@@ -244,7 +434,9 @@ export default function BookedServicesScreen() {
         );
     }
 
-    if (bookings.length === 0) {
+    const totalBookings = bookingsData.totalBookings;
+
+    if (totalBookings === 0 && activeTab === 'active') {
         return (
             <View style={[styles.container, styles.emptyState]}>
                 <View style={styles.illustrationContainer}>
@@ -290,70 +482,45 @@ export default function BookedServicesScreen() {
                 type={notification.type}
                 onClose={hideNotification}
             />
-            <ScrollView 
-                style={styles.content}
-                contentContainerStyle={styles.scrollContent}
-            >
-                <View style={styles.header}>
-                    <Text style={styles.title}>My Bookings</Text>
-                    <Text style={styles.subtitle}>View and manage your service bookings</Text>
-                </View>
-                {[...bookings]
-                  .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-                  .map((booking) => (
-                    <Pressable
-                        key={booking.id}
-                        style={styles.bookingCard}
-                        onPress={() => handleBookingPress(booking.id)}
-                    >
-                        <Image
-                            source={{ uri: `${process.env.EXPO_PUBLIC_API_URL}/api/v1${booking.service.media[0]}` }}
-                            style={styles.bookingImage}
-                        />
-                        <View style={styles.bookingContent}>
-                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+            
+            <View style={styles.header}>
+                <Text style={styles.title}>My Bookings</Text>
+                <Text style={styles.subtitle}>Manage your service bookings ({totalBookings} total bookings)</Text>
+            </View>
 
-
-                                <Text style={styles.serviceName}>{booking.service.name.length > 20 ? booking.service.name.slice(0, 20) + '...' : booking.service.name}</Text>
-                                <Badge
-                                    text={booking.status}
-                                    variant={getStatusColor(booking.status)}
-                                    size="small"
+            {/* Tab Navigation */}
+            <View style={styles.tabContainer}>
+                {tabs.map((tab) => {
+                    const IconComponent = tab.icon;
+                    const isActive = activeTab === tab.key;
+                    return (
+                        <Pressable
+                            key={tab.key}
+                            style={[styles.tab, isActive && styles.activeTab]}
+                            onPress={() => setActiveTab(tab.key)}
+                        >
+                            <View style={styles.tabIconContainer}>
+                                <IconComponent 
+                                    size={18} 
+                                    color={isActive ? colors.primary.main : colors.text.secondary}
+                                    style={styles.tabIcon} 
                                 />
                             </View>
-                            <View style={styles.bookingDetails}>
-                                <View style={styles.detailRow}>
-                                    <Calendar size={16} style={styles.detailIcon} />
-                                    <Text style={styles.detailText}>{formatDate(booking.date)}</Text>
-                                </View>
-                                <View style={styles.detailRow}>
-                                    <Clock size={16} style={styles.detailIcon} />
-                                    <Text style={styles.detailText}>{booking.time_slot}</Text>
-                                </View>
-                                <View style={styles.detailRow}>
-                                    <User size={16} style={styles.detailIcon} />
-                                    <Text style={styles.detailText}>{booking.service.instructorName}</Text>
-                                </View>
-                                {booking.service.location && (
-                                    <View style={styles.detailRow}>
-                                        <MapPin size={16} style={styles.detailIcon} />
-                                        <Text style={styles.detailText}>
-                                            {booking.service.location.address}, {booking.service.location.city}
-                                        </Text>
-                                    </View>
-                                )}
-                            </View>
-                            <View style={styles.priceContainer}>
-                                <Text style={styles.price}>₹{booking.total_amount}</Text>
-                                <View style={styles.viewDetailsButton}>
-                                    <Text style={styles.viewDetailsText}>View Details</Text>
-                                    <ArrowRight size={16} color={colors.neutral.lightest} />
-                                </View>
-                            </View>
-                        </View>
-                    </Pressable>
-                ))}
-            </ScrollView>
+                            <Text style={[styles.tabText, isActive && styles.activeTabText]}>
+                                {tab.title}
+                            </Text>
+                            <Text style={[styles.tabCount, isActive && styles.activeTabCount]}>
+                                ({tab.count})
+                            </Text>
+                        </Pressable>
+                    );
+                })}
+            </View>
+
+            {/* Tab Content */}
+            <View style={styles.content}>
+                {renderTabContent()}
+            </View>
         </View>
     );
 } 

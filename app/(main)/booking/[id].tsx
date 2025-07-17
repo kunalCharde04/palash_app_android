@@ -65,6 +65,8 @@ export default function BookingDetailsScreen() {
     const [reviewEditMode, setReviewEditMode] = useState(false);
     const dispatch = useDispatch();
 
+    console.log("booking: ", booking);
+
     useEffect(() => {
         const loadBooking = async () => {
             try {
@@ -455,7 +457,7 @@ export default function BookingDetailsScreen() {
             </View>
             <ScrollView style={styles.content}>
                 <Image
-                    source={{ uri: encodeURI(`${process.env.EXPO_PUBLIC_API_URL}${booking.service.media[0]}`) }}
+                    source={{ uri: encodeURI(`${process.env.EXPO_PUBLIC_API_URL}/api/v1${booking.service.media[0]}`) }}
                     style={styles.image}
                 />
                 <View style={styles.section}>
