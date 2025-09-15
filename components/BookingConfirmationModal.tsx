@@ -17,9 +17,7 @@ interface BookingConfirmationModalProps {
   serviceName: string;
   servicePrice: string;
   serviceDuration: number | string;
-  serviceSessionType: string;
   serviceLocation: string;
-  serviceDifficultyLevel: string;
   serviceIsOnline: boolean;
   serviceId: string;
   user: any;
@@ -35,9 +33,7 @@ export const BookingConfirmationModal: React.FC<BookingConfirmationModalProps> =
   serviceName,
   servicePrice,
   serviceDuration,
-  serviceSessionType,
   serviceLocation,
-  serviceDifficultyLevel,
   serviceIsOnline,
   serviceId,
 }) => {
@@ -232,26 +228,18 @@ export const BookingConfirmationModal: React.FC<BookingConfirmationModalProps> =
                 <Text style={styles.serviceDetailLabel}>Service Name</Text>
                 <Text style={styles.serviceDetailValue}>{serviceName}</Text>
               </View>
-              <View style={styles.serviceDetailRow}>
+              {/* <View style={styles.serviceDetailRow}>
                 <Text style={styles.serviceDetailLabel}>Duration</Text>
-                <Text style={styles.serviceDetailValue}>{serviceDuration} hours</Text>
-              </View>
-              <View style={styles.serviceDetailRow}>
-                <Text style={styles.serviceDetailLabel}>Session Type</Text>
-                <Text style={styles.serviceDetailValue}>{serviceSessionType}</Text>
-              </View>
+                <Text style={styles.serviceDetailValue}>{serviceDuration} minutes</Text>
+              </View> */}
               <View style={styles.serviceDetailRow}>
                 <Text style={styles.serviceDetailLabel}>Location</Text>
                 <Text style={styles.serviceDetailValue}>{serviceLocation}</Text>
               </View>
-              <View style={styles.serviceDetailRow}>
-                <Text style={styles.serviceDetailLabel}>Difficulty Level</Text>
-                <Text style={styles.serviceDetailValue}>{serviceDifficultyLevel}</Text>
-              </View>
-              <View style={[styles.serviceDetailRow, { borderBottomWidth: 0 }]}>
+              {/* <View style={[styles.serviceDetailRow, { borderBottomWidth: 0 }]}>
                 <Text style={styles.serviceDetailLabel}>Online Session</Text>
                 <Text style={styles.serviceDetailValue}>{serviceIsOnline ? 'Yes' : 'No'}</Text>
-              </View>
+              </View> */}
             </View>
 
             <View style={styles.priceContainer}>

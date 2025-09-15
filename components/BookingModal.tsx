@@ -19,10 +19,8 @@ interface BookingModalProps {
     timeSlots: TimeSlot[];
   }>;
   serviceDuration: number | string;
-  serviceSessionType: string;
   serviceLocation: string;
   user: any;
-  serviceDifficultyLevel: string;
   serviceIsOnline: boolean;
 }
 
@@ -35,9 +33,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
   servicePrice,
   availability,
   serviceDuration,
-  serviceSessionType,
   serviceLocation,
-  serviceDifficultyLevel,
   serviceIsOnline,
   user,
 }) => {
@@ -298,9 +294,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
         serviceName={serviceName}
         servicePrice={servicePrice}
         serviceDuration={serviceDuration}
-        serviceSessionType={serviceSessionType}
         serviceLocation={serviceLocation}
-        serviceDifficultyLevel={serviceDifficultyLevel}
         serviceIsOnline={serviceIsOnline}
       />
     </>

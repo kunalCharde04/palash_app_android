@@ -18,11 +18,13 @@ export default function ProfileScreen() {
   const [userData, setUserData] = useState<UserProfile>({
     id: '',
     name: '',
-    username: '',
+    username: null,
     phone_or_email: '',
-    date_of_birth: '',
+    date_of_birth: null,
     avatar: '',
     role: '',
+    is_verified: false,
+    is_agreed_to_terms: false,
     createdAt: '',
     updatedAt: '',
   });

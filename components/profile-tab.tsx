@@ -144,7 +144,7 @@ const ProfileTab: React.FC<ProfileTabProps> = ({ isEditing, onSave, onCancel, ..
         <View style={styles.inputContainer}>
           <TextInput
             label="Username"
-            value={formData.username}
+            value={formData.username || ''}
             onChangeText={(text) => handleChange("username", text)}
             rightIcon={<UserRound size={20} color={colors.icon.input} />}
           />
@@ -166,7 +166,7 @@ const ProfileTab: React.FC<ProfileTabProps> = ({ isEditing, onSave, onCancel, ..
         <View style={styles.inputContainer}>
           <TextInput
             label="Date of Birth"
-            value={new Date(formData.date_of_birth).toLocaleDateString()}
+            value={formData.date_of_birth ? new Date(formData.date_of_birth).toLocaleDateString() : 'Not provided'}
             disabled={true}
             onChangeText={(text) => handleChange("date_of_birth", text)}
             rightIcon={<Calendar size={20} color={colors.icon.input} />}
@@ -204,7 +204,7 @@ const ProfileTab: React.FC<ProfileTabProps> = ({ isEditing, onSave, onCancel, ..
             <View style={styles.infoLabel}>
               <Calendar size={20} color={colors.primary.main} />
             </View>
-            <Text style={styles.infoText}>{new Date(userData.date_of_birth).toLocaleDateString()}</Text>
+            <Text style={styles.infoText}>{userData.date_of_birth ? new Date(userData.date_of_birth).toLocaleDateString() : 'Not provided'}</Text>
           </View>
 
           <View style={styles.infoRow}>
