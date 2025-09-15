@@ -10,9 +10,11 @@ export interface AuthResponse {
     phone_or_email: string
     avatar: string | null
     name: string
-    username: string
-    date_of_birth: string // ISO date string
+    username: string | null
+    date_of_birth: string | null // ISO date string, now optional
     role: 'ADMIN' | 'USER' | string // extend as needed
+    is_verified: boolean
+    is_agreed_to_terms: boolean
     created_at: string // ISO date string
     updated_at: string // ISO date string
   } | null
@@ -36,12 +38,10 @@ export const signInUser = async (phoneOrEmail: string): Promise<any> => {
 
 export const signUpUser = async (payload: any): Promise<any> => {
     try {
-        const {name, username, emailOrPhone, dob, is_agreed_to_terms} = payload;
+        const {name, emailOrPhone, is_agreed_to_terms} = payload;
         const response = await api.post('/users/auth/sign-up', { 
             name, 
-            username, 
             phoneOrEmail: emailOrPhone, 
-            dob,
             is_agreed_to_terms
         });
         return response.data;
@@ -103,9 +103,11 @@ export const refreshAccessToken = async (refreshToken: string): Promise<RefreshR
                         phone_or_email: 'dev@example.com',
                         avatar: null,
                         name: 'Dev User',
-                        username: 'devuser',
-                        date_of_birth: new Date().toISOString(),
+                        username: null,
+                        date_of_birth: null,
                         role: 'USER',
+                        is_verified: true,
+                        is_agreed_to_terms: true,
                         created_at: new Date().toISOString(),
                         updated_at: new Date().toISOString()
                     }

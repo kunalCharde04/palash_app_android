@@ -4,8 +4,8 @@ import React, { useRef, useState } from "react"
 import { StyleSheet, View, Text, TouchableOpacity, SafeAreaView, StatusBar, Image, Dimensions } from "react-native"
 import { Link, useRouter } from "expo-router"
 import { ThemeProvider, useTheme } from "@/theme/theme-provider"
-import { TextInput, validateDOB, validateEmail, validatePhone } from "@/components/ui/Inputs/input"
-import { Mail, MoveRight, Phone, PhoneIcon, MoveLeftIcon, UserRound, AtSign, CalendarDays, KeyRound, Icon } from 'lucide-react-native';
+import { TextInput, validateEmail, validatePhone } from "@/components/ui/Inputs/input"
+import { Mail, MoveRight, Phone, PhoneIcon, MoveLeftIcon, UserRound, KeyRound, Icon } from 'lucide-react-native';
 import { Checkbox } from "@/components/ui/checkbox/checkbox"
 import { Button } from "@/components/ui/buttons/Buttons"
 import { Video, AVPlaybackStatus, ResizeMode } from 'expo-av';
@@ -23,8 +23,6 @@ import PopupNotification from "@/components/Notification"
 const inititalState = {
     name: "",
     emailOrPhone: "",
-    username: "",
-    dob: "",
 }
 
 export default function SignUp() {
@@ -186,9 +184,7 @@ export default function SignUp() {
 
     const fields = [
         { label: 'Enter your Name', key: 'name' as PayloadKey, placeholder: 'eg. Jhon Doe', icon: "UserRound" },
-        { label: 'Choose a Username', key: 'username' as PayloadKey, placeholder: 'eg. jhon_doe', icon: "AtSign" },
         { label: 'Enter your email address', key: 'emailOrPhone' as PayloadKey, placeholder: 'eg. jhondoe@mail.com', icon: "Mail" },
-        { label: 'Enter your date of birth (DD-MM-YYYY)', key: 'dob' as PayloadKey, placeholder: 'DD-MM-YYYY', icon: "CalendarDays" },
     ];
 
     const handleSignUp = async () => {
@@ -197,8 +193,8 @@ export default function SignUp() {
                 showNotification("error", "Please agree to the terms of use");
                 return;
             }
-            if(!validateEmail(payload.emailOrPhone) && !validateDOB(payload.dob)) {
-                showNotification("error", "Please enter a valid email or date of birth");
+            if(!validateEmail(payload.emailOrPhone)) {
+                showNotification("error", "Please enter a valid email address");
                 return;
             }
             dispatch(signUpStart());
@@ -236,12 +232,8 @@ export default function SignUp() {
         switch (icon) {
             case 'UserRound':
                 return <UserRound color={colors.icon.input} size={20} />
-            case 'AtSign':
-                return <AtSign color={colors.icon.input} size={20} />
             case 'Mail':
                 return <Mail color={colors.icon.input} size={20} />
-            case 'CalendarDays':
-                return <CalendarDays color={colors.icon.input} size={20} />
             default:
                 return <UserRound color={colors.icon.input} size={20} />
         }

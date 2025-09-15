@@ -753,11 +753,7 @@ export default function ServiceDetail() {
           <View style={styles.detailsContainer}>
             <View style={styles.detailItem}>
               <Clock size={20} color={colors.primary.main} style={styles.detailIcon} />
-              <Text style={styles.detailText}>{service.duration} hours</Text>
-            </View>
-            <View style={styles.detailItem}>
-              <Users size={20} color={colors.primary.main} style={styles.detailIcon} />
-              <Text style={styles.detailText}>{service.sessionType}</Text>
+              <Text style={styles.detailText}>{service.duration} minutes</Text>
             </View>
             {service.isOnline ? (
               <View style={styles.detailItem}>
@@ -770,10 +766,6 @@ export default function ServiceDetail() {
                 <Text style={styles.detailText}>{service.location?.city || 'Location'}</Text>
               </View>
             )}
-            <View style={styles.detailItem}>
-              <Award size={20} color={colors.primary.main} style={styles.detailIcon} />
-              <Text style={styles.detailText}>{service.difficultyLevel || 'All Levels'}</Text>
-            </View>
           </View>
 
 
@@ -788,20 +780,17 @@ export default function ServiceDetail() {
 
           <View style={styles.infoSection}>
             <Text style={styles.sectionTitle}>About this service</Text>
-            <Text style={styles.description}>{service.description}</Text>
+            {service.description && service.description.length > 0 ? (
+              service.description.map((desc, index) => (
+                <Text key={index} style={styles.description}>
+                  • {desc}
+                </Text>
+              ))
+            ) : (
+              <Text style={styles.description}>No description available</Text>
+            )}
           </View>
 
-          {service.benefitsAndOutcomes && service.benefitsAndOutcomes.length > 0 && (
-            <View style={styles.benefitsContainer}>
-              <Text style={styles.sectionTitle}>Benefits & Outcomes</Text>
-              {service.benefitsAndOutcomes.map((benefit, index) => (
-                <View key={index} style={styles.benefitItem}>
-                  <Award size={16} color={colors.primary.main} />
-                  <Text style={styles.benefitText}>{benefit}</Text>
-                </View>
-              ))}
-            </View>
-          )}
 
           {service.instructorName && (
             <View style={styles.instructorSection}>
@@ -922,9 +911,7 @@ export default function ServiceDetail() {
         serviceName={service?.name || ''}
         servicePrice={service?.price || '0'}
         serviceDuration={service?.duration || '0'}
-        serviceSessionType={service?.sessionType || ''}
         serviceLocation={service?.location?.city || ''}
-        serviceDifficultyLevel={service?.difficultyLevel || ''}
         serviceIsOnline={service?.isOnline || false}
         availability={availability}
       />

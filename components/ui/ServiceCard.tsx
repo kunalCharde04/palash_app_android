@@ -9,7 +9,7 @@ export interface ServiceCardProps {
   // Basic info
   id: string;
   name: string;
-  description: string;
+  description: string[]; // Array of description points
   shortDescription?: string; // Brief summary for cards/listings
   average_rating?: number;
   total_reviews?: number;
@@ -24,19 +24,10 @@ export interface ServiceCardProps {
   // Pricing
   price: string; // Base price
   currency?: string; // USD, EUR, etc.
-  pricingType?: 'FIXED' | 'HOURLY' | 'PACKAGE'; // Pricing structure
   discountPrice?: string; // Optional sale price
   
   // Scheduling
-  duration: number; // Length in hours
-  sessionType: 'GROUP' | 'PRIVATE' | 'SELF_GUIDED'; // Type of session
-  maxParticipants?: number; // For group sessions
-  
-  // Details
-  difficultyLevel?: 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCE' | 'ALL_LEVELS';
-  prerequisites?: string[];
-  equipmentRequired?: string[];
-  benefitsAndOutcomes?: string[];
+  duration: number; // Length in minutes
   
   // Instructor/provider info
   instructorId?: string;
@@ -91,10 +82,6 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({
  instructorBio,
  instructorId,
  cancellationPolicy,
- difficultyLevel,
- prerequisites,
- equipmentRequired,
- benefitsAndOutcomes,
  currency = 'INR',
  featured,
  isActive,
@@ -267,7 +254,14 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({
             </View>
           )
         }
-        <Text style={styles.description}>{description.length > 100 ? description.slice(0, 100) + '...' : description}</Text>   
+        <Text style={styles.description}>
+          {description.length > 0 
+            ? (description.join(' ').length > 100 
+                ? description.join(' ').slice(0, 100) + '...' 
+                : description.join(' '))
+            : 'No description available'
+          }
+        </Text>   
         <View style={styles.priceRow}>
           <Text style={styles.price}>{renderCurrencySymbol(currency)} {parseFloat(price).toFixed(2)}</Text>
           <View style={styles.ratingContainer}>
